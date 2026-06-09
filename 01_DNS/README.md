@@ -1,6 +1,6 @@
 # Configuración de Servidor DNS con BIND9
 
-**Objetivo del Laboratorio:** Implementar y administrar un servidor de nombres de dominio (DNS) utilizando BIND9 en Ubuntu Server. El objetivo abarca desde la configuración inicial como servidor caché (para agilizar peticiones almacenando temporalmente los registros para futuras solicitudes) hasta su despliegue como servidor maestro primario de una zona directa e inversa propia, asumiendo autoridad sobre la resolución de nombres críticos (como www, ftp, mail, etc.) apuntando a la IP privada del entorno.
+**Objetivo:** Implementar y administrar un servidor de nombres de dominio (DNS) utilizando BIND9 en Ubuntu Server. El objetivo abarca desde la configuración inicial como servidor caché (para agilizar peticiones almacenando temporalmente los registros para futuras solicitudes) hasta su despliegue como servidor maestro primario de una zona directa e inversa propia, asumiendo autoridad sobre la resolución de nombres críticos (como www, ftp, mail, etc.) apuntando a la IP privada del entorno.
 
 ### Instalación
 Para que el servidor DNS funcione, se requieren los paquetes del servicio central junto con utilidades de diagnóstico de red. 
