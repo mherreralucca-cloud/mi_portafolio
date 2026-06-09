@@ -1,8 +1,8 @@
-# 🔐 Preparación de Infraestructura SSL/TLS con OpenSSL
+# Preparación de Infraestructura SSL/TLS con OpenSSL
 
 **Objetivo:** Dominar las herramientas criptográficas base en entornos GNU/Linux para preparar un servidor antes de interactuar con una Entidad Certificadora (CA) externa o para asegurar el tráfico en redes privadas. La práctica abarca la gestión de criptografía asimétrica mediante la generación de claves privadas RSA, la creación de Solicitudes de Firma de Certificado (CSR) y la emisión de un certificado público autofirmado (Self-Signed) para su posterior integración en servicios web (HTTPS) o de correo (SMTP/IMAP).
 
-### 📦 Instalación
+### Instalación
 La suite de herramientas de administración criptográfica estándar en la industria es `openssl`. En la mayoría de las distribuciones basadas en Debian/Ubuntu Server se encuentra preinstalada, pero se puede verificar, instalar o actualizar utilizando la gestión de paquetes nativa:
 
 ```bash
@@ -10,7 +10,7 @@ sudo apt update
 sudo apt install openssl -y
 ```
 
-### ⚙️ Archivos de Configuración Clave y Rutas
+### Archivos de Configuración Clave y Rutas
 El sistema operativo Linux implementa una estructura jerárquica estricta para garantizar la confidencialidad y el aislamiento de los componentes criptográficos:
 
 * **Directorio de Certificados Públicos (`.crt` / `.pem`):**
@@ -20,7 +20,7 @@ El sistema operativo Linux implementa una estructura jerárquica estricta para g
     *Ruta:* `/etc/ssl/private/`
     *Detalle:* Bóveda de seguridad del sistema. Almacena las claves privadas que permiten descifrar las conexiones. Cuenta con permisos altamente restrictivos (legible únicamente por el superusuario `root`).
 
-### 🛠️ Comandos Clave y Ciclo de Vida del Certificado
+### Comandos Clave y Ciclo de Vida del Certificado
 El despliegue operativo del material criptográfico consta de pasos secuenciales y estandarizados utilizando la terminal:
 
 1. **Generación de la Clave Privada (RSA de 2048 bits):**
@@ -44,7 +44,7 @@ El despliegue operativo del material criptográfico consta de pasos secuenciales
     sudo cp server.key /etc/ssl/private/
     ```
 
-### 🧪 Pruebas y Verificación
+### Pruebas y Verificación
 Para auditar la validez y consistencia del material generado antes de enlazarlo a un servidor web o de correos, se inspeccionan los metadatos binarios del certificado en formato legible:
 
 * **Auditoría e Inspección de Metadatos:**
