@@ -19,6 +19,7 @@ Dentro de cada carpeta encontrarás:
 1. Un archivo **`README.md`** con la síntesis del despliegue (instalación, rutas de configuración y comandos de gestión).
 2. El archivo **`.pdf`** original adjunto como informe completo, que incluye el marco teórico, capturas de pantalla del entorno de pruebas (terminal) y evidencias del correcto funcionamiento del servicio.
 
+---
 
 >
 > "Talk is cheap. Show me the code." — Linus Torvalds
