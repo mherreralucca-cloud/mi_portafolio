@@ -14,6 +14,8 @@ El propósito de este espacio es demostrar experiencia práctica y "manos en el 
 
 ---
 
+<img width="220" height="220" alt="tux" src="https://github.com/user-attachments/assets/800b49d8-1684-4aa4-a4ac-a9525755afa4" />
+
 ##  Cómo navegar por este repositorio
 Dentro de cada carpeta encontrarás:
 1. Un archivo **`README.md`** con la síntesis del despliegue (instalación, rutas de configuración y comandos de gestión).
