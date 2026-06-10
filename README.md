@@ -20,6 +20,7 @@ Dentro de cada carpeta encontrarás:
 2. El archivo **`.pdf`** original adjunto como informe completo, que incluye el marco teórico, capturas de pantalla del entorno de pruebas (terminal) y evidencias del correcto funcionamiento del servicio.
 
 
+>
 > "Talk is cheap. Show me the code." — Linus Torvalds
-
+>
 <img width="220" height="220" alt="tux" src="https://github.com/user-attachments/assets/800b49d8-1684-4aa4-a4ac-a9525755afa4" />
