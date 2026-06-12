@@ -84,6 +84,7 @@ El dominio de esta tecnología ligera de contenedores es la base arquitectónica
 3. **Microsoft Azure:** El estándar corporativo, integrando servicios híbridos y virtualización avanzada para entornos empresariales.
 
 ***
+El paso a paso mas en detalle con sus capturas se encuentra en el .pdf adjunto, gracias por ver!
 
 **Bibliografía:**
 * Documentación Oficial de LXC (Linux Containers): https://linuxcontainers.org/
