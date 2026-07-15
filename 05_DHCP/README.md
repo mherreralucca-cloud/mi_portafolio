@@ -110,6 +110,8 @@ En las redes corporativas a gran escala moderna, el servicio de DHCP no se admin
 
 ***
 
+El paso a paso mas en detalle con sus capturas se encuentra en el .pdf adjunto, gracias por ver!
+
 **Bibliografía:**
 * Documentación Oficial de Ubuntu Server (ISC DHCP): https://ubuntu.com/server/docs/network-dhcp
 * Estándares IETF: RFC 2131 (Protocolo DHCP) y RFC 2132 (Opciones de DHCP).
