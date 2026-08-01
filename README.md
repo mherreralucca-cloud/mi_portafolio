@@ -1,4 +1,4 @@
-# 🐧 Portfolio: Administración de Servidores y Servicios en Linux
+# 🐧 Portafolio: Administración de Servidores y Servicios en Linux
 
 ¡Hola! 👋 Soy **Lucca Martinenghi Herrera**, Técnico en Redes de Datos y Telecomunicaciones.
 
