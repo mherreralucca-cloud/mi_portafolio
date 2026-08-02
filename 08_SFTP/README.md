@@ -1,4 +1,4 @@
-# 📂 09 - Servidor de Archivos Seguro: SFTP Enjaulado (Chroot Jail)
+# 🌐 Laboratorio: Servidor de Archivos Seguro: SFTP Enjaulado (Chroot Jail)
 
 En la administración de servicios, transferir archivos entre clientes y servidores es una tarea de todos los días. Pero, usar protocolos viejos como FTP es un riesgo grave. En este laboratorio reemplazamos FTP por SFTP (*SSH File Transfer Protocol*), aplicando el principio de menor privilegio mediante una "jaula" (*Chroot Jail*) para que los usuarios externos puedan subir archivos de forma cifrada sin poder navegar por el sistema ni abrir una terminal.
 
