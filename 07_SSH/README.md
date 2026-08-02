@@ -1,4 +1,4 @@
-# 📂 08 - Configuración de Servicios: SSH, Hardening y Túneles de Red
+# 🌐 Laboratorio: Configuración de Servicios: SSH, Hardening y Túneles de Red
 
 En el día a día, SSH (*Secure Shell*) no sirve solamente para abrir una terminal a distancia; es la base de toda administración segura en la red. 
 
