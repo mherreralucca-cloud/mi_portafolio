@@ -104,7 +104,7 @@ Con el firewall cerrando el paso y el proxy filtrando, simulamos el tráfico de 
 
 Ejecutamos `curl` forzando el paso por el proxy hacia una conexión HTTPS:
 ```bash
-curl -x [http://192.168.122.1:3128](http://192.168.122.1:3128) -I [https://www.facebook.com](https://www.facebook.com)
+curl -x http://172.20.0.254:3128 -I https://www.facebook.com
 ```
 
 *Resultado:* El firewall permite llegar al puerto 3128. Squid lee la petición, identifica el SNI de facebook.com, hace match con la regla `deny` y corta el acceso. La consola nos devuelve el código `HTTP/1.1 403 Forbidden`. El cliente queda totalmente bloqueado de alcanzar la IP pública.
