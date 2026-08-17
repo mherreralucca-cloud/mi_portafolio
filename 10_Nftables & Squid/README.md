@@ -1,4 +1,4 @@
-# 🛡️ Laboratorio: Arquitectura Zero Trust, Firewall (nftables) y Proxy Explícito (Squid)
+# 🧱 Laboratorio: Arquitectura Zero Trust, Firewall (nftables) y Proxy Explícito (Squid)
 
 **Objetivo del Laboratorio:** Diseñar y desplegar una arquitectura de red de borde (Edge) basada en el modelo de Confianza Cero (Zero Trust). La práctica consiste en abandonar el esquema clásico de proxy transparente y adoptar un proxy explícito utilizando Squid, acoplado con nftables para la gestión atómica del firewall. El objetivo principal es restringir por completo la salida directa a Internet de la red interna e inspeccionar a nivel de Capa 7 (SNI) las peticiones HTTPS, logrando un entorno auditado y restrictivo mediante una política de Default DROP.
 
@@ -26,55 +26,96 @@ sudo apt install nftables squid curl -y
 
 ---
 
-### 2. Hardening a Nivel de Red (nftables)
-El eje de esta topología es el aislamiento estricto. Se configuran las reglas para que ningún paquete de la red interna cruce hacia Internet a menos que vaya a través del servidor Squid.
+### 2. Configuración del Firewall (nftables)
+Acá está la base del aislamiento. Modificamos la tabla de reglas para asegurarnos de que la red interna no tenga ruteo directo a Internet. Todo debe morir en el firewall o pasar por el proxy.
 
-* **Activación del Servicio:**
-  Se habilita nftables en el arranque para que aplique el *ruleset* al prender el servidor.
-  ```bash
-  sudo systemctl enable --now nftables
-  ```
-* **Políticas (Default DROP):** En la tabla de reglas (`/etc/nftables.conf`), se configuran las subredes y se establecen las cadenas de reenvío (FORWARD) en caída por defecto. Cualquier host que intente bypassear el embudo del puerto `3128` (Squid) perderá sus paquetes de forma silenciosa.
+**Archivo de configuración:** `/etc/nftables.conf`
+
+Limpiamos las reglas viejas y armamos la estructura base con política DROP:
+```text
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    # Controlamos el tráfico que atraviesa el router (tránsito)
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+
+    # Controlamos el tráfico que va dirigido al propio servidor
+    chain input {
+        type filter hook input priority 0; policy drop;
+        
+        # Permitimos tráfico local
+        iif "lo" accept
+        
+        # Aceptamos conexiones ya establecidas
+        ct state established,related accept
+        
+        # Permitimos que la red interna se conecte al puerto del proxy (3128)
+        ip saddr 172.20.0.254/16 tcp dport 3128 accept
+        
+        # Permitimos administración por SSH
+        tcp dport 22 accept
+    }
+}
+```
+
+Habilitamos el servicio para que las reglas persistan al reiniciar:
+```bash
+sudo systemctl enable --now nftables
+```
 
 ---
 
-### 3. Filtrado de Capa 7 y Control de Acceso (Squid)
-El tráfico autorizado en Capa 3/4 por nftables es auditado por Squid a nivel de aplicación (Capa 7).
+### 3. Filtrado de Capa 7 (Squid)
+El tráfico que nftables deja pasar hacia el puerto 3128, ahora lo ataja Squid para auditar a nivel de aplicación.
 
-* **Reglas de Acceso (ACL):**
-  *Ruta:* `/etc/squid/squid.conf`
-  Se definen las Listas de Control de Acceso (ACL) para limitar el uso de la red, bloqueando de forma explícita dominios prohibidos (ej. Redes sociales como Facebook o sitios de entretenimiento).
+**Archivo de configuración:** `/etc/squid/squid.conf`
 
----
+Configuramos Listas de Control de Acceso (ACL) para bloquear dominios específicos (ej: redes sociales) y habilitamos el puerto de escucha:
 
-### 4. Auditoría y Verificación de Perímetro
-Una vez establecidas las tablas y las listas de control, se recarga el motor de proxy y se inician las pruebas de ruteo.
+```text
+# Definimos la red local
+acl red_interna src 172.20.0.254/16
 
+# Definimos los dominios que queremos bloquear
+acl dominios_bloqueados dstdomain .facebook.com .instagram.com
+
+# Aplicamos las reglas de acceso (el orden importa)
+http_access deny dominios_bloqueados
+http_access allow red_interna
+http_access deny all
+
+# Puerto del proxy
+http_port 3128
+```
+
+Recargamos el servicio para aplicar los cambios:
 ```bash
 sudo systemctl restart squid
 ```
-**Prueba:**
-```bash
-curl -x http://172.20.0.254:3128 -I https://www.google.com
-```
-*Resultado esperado:*Tiene que devolver HTTP/1.1 200 OK. El proxy lo dejó pasar a internet
-
-**Prueba de Bloqueo HTTPS:**
-Desde una consola cliente ubicada en la red local, se fuerza una petición web apuntando al proxy.
-
-```bash
-curl -x http://172.20.0.254:3128 -I https://www.facebook.com
-```
-
-*Resultado esperado:* Squid intercepta la solicitud leyendo el SNI de la petición TLS. Al cruzarlo con su ACL restrictiva, interrumpe el acceso y le devuelve al cliente el código `HTTP/1.1 403 Forbidden`. El usuario es incapaz de alcanzar la IP pública.
 
 ---
 
-### Conclusión: Arquitectura Zero Trust y Perímetro Corporativo
-A lo largo de este laboratorio, superamos la simple instalación de paquetes para diseñar una verdadera arquitectura de borde (Edge). Comprobamos por qué el modelo clásico de proxy transparente y reglas iptables lineales es obsoletto, migrando hacia el motor de nftables y un proxy explícito con inspección SNI para el tráfico HTTPS. 
+### 4. Pruebas y Verificación del Perímetro
+Con el firewall cerrando el paso y el proxy filtrando, simulamos el tráfico de un cliente de la red local intentando entrar a un sitio prohibido.
 
-La red interna ahora carece de acceso directo a Internet, operando bajo un modelo de Confianza Cero donde cada petición de capa 7 es inspeccionada, autorizada o denegada, y registrada para su análisis forense.
+Ejecutamos `curl` forzando el paso por el proxy hacia una conexión HTTPS:
+```bash
+curl -x [http://192.168.122.1:3128](http://192.168.122.1:3128) -I [https://www.facebook.com](https://www.facebook.com)
+```
+
+*Resultado:* El firewall permite llegar al puerto 3128. Squid lee la petición, identifica el SNI de facebook.com, hace match con la regla `deny` y corta el acceso. La consola nos devuelve el código `HTTP/1.1 403 Forbidden`. El cliente queda totalmente bloqueado de alcanzar la IP pública.
 
 ---
 
-> **Nota:** El desarrollo paso a paso del laboratorio, el troubleshooting de conectividad, los archivos de configuración exactos y las capturas de pantalla demostrando el funcionamiento de las reglas perimetrales se encuentran documentados en detalle en el archivo `.pdf` adjunto en esta misma carpeta.
+### Conclusión: Perímetro Corporativo en la Práctica
+En este laboratorio diseñamos una arquitectura de borde (Edge) real. Comprobamos en la consola por qué las viejas reglas de iptables quedaron atrás frente al rendimiento de nftables, y controlamos el tráfico HTTPS usando un proxy explícito con inspección SNI. 
+
+El resultado no es solo un proxy funcionando, sino un entorno de red auditado donde la red interna no tiene salida directa a Internet, operando bajo un modelo de Confianza Cero (Zero Trust).
+
+---
+
+> **Nota:** El desarrollo completo del laboratorio, el troubleshooting, los archivos exactos y las capturas de pantalla de la terminal demostrando los bloqueos se encuentran documentados en detalle en el archivo `.pdf` adjunto en este repositorio.
